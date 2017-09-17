@@ -26,11 +26,13 @@ def post(lat, long, time):
             }
         }
     ]
-    logging.info(requests.post('{}/addFeatures'.format(FEATURELAYER_URL),
+    response = requests.post('{}/addFeatures'.format(FEATURELAYER_URL),
                                data={
                                    'f': 'json',
                                    'features': json.dumps(feature)
-                               }))
+                               })
+
+    logging.info(response.text)
 
 
 def incoming(request):

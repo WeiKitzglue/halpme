@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html>
-  <head>
+<head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 
     <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
@@ -9,107 +9,129 @@
     <link rel="stylesheet" href="https://js.arcgis.com/3.21/dijit/themes/claro/claro.css">
     <link rel="stylesheet" href="https://js.arcgis.com/3.21/esri/css/esri.css">
     <style>
-      html, body, #mapDiv {
-        padding:0;
-        margin:0;
-        height:100%;
-      }
+        html, body, #mapDiv {
+            padding:0;
+            margin:0;
+            height:100%;
+        }
 
-      #mapDiv {
-        position: relative;
-      }
+        #mapDiv {
+            position: relative;
+        }
 
-      #bottomPanel {
-        left: 50%;
-        margin: 0 auto;
-        margin-left: -500px;
-        position: absolute;
-        bottom: 2.5em;
-      }
+        #bottomPanel {
+            font-family: Helvetica Neue,Helvetica,Arial,sans-serif;
+            left: 50%;
+            margin: 0 auto;
+            margin-left: -500px;
+            position: absolute;
+            bottom: 2.5em;
+        }
 
-      #timeInfo{
-        border-radius: 4px;
-        border: solid 2px #ccc;
-        background-color: #fff;
-        display: block;
-        padding: 5px;
-        position: relative;
-        text-align: center;
-        width: 1000px;
-        z-index: 99;
-      }
+        #timeInfo{
+            border-radius: 6px;
+            border: solid 1px  #000000;
+            background-color: #fff;
+            display: block;
+            position: relative;
+            text-align: center;
+            width: 1000px;
+            z-index: 99;
+            padding: 15px 0px;
+        }
+
+        #header{
+            padding-bottom: 10px;
+        }
+
+
     </style>
 
     <script src="https://js.arcgis.com/3.21/"></script>
     <script>
-      var map;
-      require([
-        "esri/map", "esri/layers/ArcGISDynamicMapServiceLayer",
-        "esri/TimeExtent", "esri/dijit/TimeSlider",
-        "dojo/_base/array", "dojo/dom", "dojo/domReady!"
-      ], function(
-        Map, ArcGISDynamicMapServiceLayer,
-        TimeExtent, TimeSlider,
-        arrayUtils, dom
-      ) {
-        map = new Map("mapDiv", {
-          basemap: "streets",
-          center: [-122.38, 37.776],
-          zoom: 9
-        });
+        require([
+                "esri/map",
+                "esri/layers/FeatureLayer",
+                "esri/InfoTemplate",
+                "esri/TimeExtent",
+                "esri/dijit/TimeSlider",
+                "dojo/_base/array",
+                "dojo/dom",
+                "dojo/domReady!"
+            ],
 
-        var opLayer = new ArcGISDynamicMapServiceLayer("https://services8.arcgis.com/j1t3CMZN0P8OmjOH/arcgis/rest/services/halp/FeatureServer");
-        opLayer.setVisibleLayers([0]);
 
-        //add the gas fields layer to the map
-        map.addLayers([opLayer]);
-        map.on("layers-add-result", initSlider);
+            function(
+                Map,
+                FeatureLayer,
+                InfoTemplate,
+                TimeExtent,
+                TimeSlider,
+                arrayUtils,
+                dom
+            ) {
 
-        function initSlider() {
-          var timeSlider = new TimeSlider({
-            style: "width: 100%;"
-          }, dom.byId("timeSliderDiv"));
-          map.setTimeSlider(timeSlider);
+                var map = new Map("mapDiv", {
+                    basemap: "streets",
+                    center: [-100, 38],
+                    zoom: 15,
+                    showLabels: true
+                });
+                var infoTemplate = new InfoTemplate("Identity", "id: ${id} | time: ${time}");
 
-          var timeExtent = new TimeExtent();
-          timeExtent.startTime = new Date("9/17/2017 UTC");
-          timeExtent.endTime = new Date("9/17/2017 UTC");
-          timeSlider.setThumbCount(2);
-          timeSlider.createTimeStopsByTimeInterval(timeExtent, 2, "esriTimeUnitsHours");
-          timeSlider.setThumbIndexes([0,1]);
-          timeSlider.setThumbMovingRate(500);
-          timeSlider.startup();
+                var featureLayer = new FeatureLayer(
+                    "https://services8.arcgis.com/j1t3CMZN0P8OmjOH/arcgis/rest/services/halp/FeatureServer/0",
+                    {mode: FeatureLayer.MODE_SNAPSHOT, outFields: ["*"], infoTemplate: infoTemplate, refreshInterval: 1}
+                );
 
-          //add labels for every other time stop
-          var labels = arrayUtils.map(timeSlider.timeStops, function(timeStop, i) {
-            if ( i % 2 === 0 ) {
-              return timeStop.getUTCHours() + ':00';
-            } else {
-              return "";
-            }
-          });
+                map.addLayers([featureLayer]);
+                map.on("layers-add-result", initSlider);
 
-          timeSlider.setLabels(labels);
+                function initSlider() {
+                    var timeSlider = new TimeSlider({
+                        style: "width: 100%;"
+                    }, dom.byId("timeSliderDiv"));
+                    map.setTimeSlider(timeSlider);
 
-          timeSlider.on("time-extent-change", function(evt) {
-            var startValString = evt.startTime.getUTCHours();
-            var endValString = evt.endTime.getUTCHours();
-            dom.byId("daterange").innerHTML = "<i>" + startValString + " and " + endValString  + "<\/i>";
-          });
-        }
-      });
+                    var timeExtent = new TimeExtent();
+                    timeExtent.startTime = new Date("2017-09-16 17:00");
+                    timeExtent.endTime = new Date("2017-09-17 17:00");
+                    timeSlider.setThumbCount(2);
+                    timeSlider.createTimeStopsByTimeInterval(timeExtent, 2, "esriTimeUnitsHours");
+                    timeSlider.setThumbIndexes([0,2]);
+                    timeSlider.setThumbMovingRate(500);
+                    timeSlider.startup();
+
+                    //add labels for every other time stop
+                    var labels = arrayUtils.map(timeSlider.timeStops, function(timeStop, i) {
+                        if ( i % 2 === 0 ) {
+                            return timeStop.getUTCHours() + ':00';
+                        } else {
+                            return "";
+                        }
+                    });
+
+                    timeSlider.setLabels(labels);
+
+                    timeSlider.on("time-extent-change", function(evt) {
+                        var startValString = evt.startTime.getUTCHours();
+                        var endValString = evt.endTime.getUTCHours();
+                    });
+                }
+
+            });
     </script>
-  </head>
-  <body class="claro">
+</head>
+<body class="claro">
 
-    <div id="mapDiv">
-      <div id="bottomPanel">
+<div id="mapDiv">
+    <div id="bottomPanel">
         <div id="timeInfo">
-          <div>HalpMe User Locations <span id="daterange">Sep 1 2017</span></div>
-          <div id="timeSliderDiv"></div>
+            <div id="header">HalpMe User Locations <span id="daterange">Sep 1 2017</span></div>
+            <div id="timeSliderDiv"></div>
         </div>
-      </div>
     </div>
-  </body>
+</div>
+</body>
 </html>
 
