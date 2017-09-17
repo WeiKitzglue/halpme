@@ -9,5 +9,5 @@ def index(request):
     return HttpResponse("HELLO")
 
 def incoming(request):
-    logging.warning(request.GET['test'])
+    logging.warning(request.GET)
     return HttpResponse("SMS")
