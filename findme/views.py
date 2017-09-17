@@ -16,12 +16,12 @@ def index(request):
     return render(request, 'findme/index.html', {'points': points})
 
 
-def post(lat, long, time):
+def post(phone_no, lat, long, time):
     feature = [
         {
             "geometry" : {"x" : long, "y" : lat},
             "attributes" : {
-                "id" : 1,
+                "id" : int(phone_no),
                 "time": int(time)
             }
         }
