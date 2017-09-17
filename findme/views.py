@@ -8,7 +8,7 @@ import requests
 import logging
 import json
 
-FEATURELAYER_URL = 'https://services8.arcgis.com/j1t3CMZN0P8OmjOH/arcgis/rest/services/halp/FeatureServer/0'
+FEATURELAYER_URL = 'https://services8.arcgis.com/j1t3CMZN0P8OmjOH/arcgis/rest/services/halp2/FeatureServer/0'
 
 # Create your views here.
 def index(request):
@@ -16,13 +16,13 @@ def index(request):
     return render(request, 'findme/index.html', {'points': points})
 
 
-def post(phone_no, lat, long, time):
+def post(phone_no, lat, lon, time):
     feature = [
         {
-            "geometry" : {"x" : long, "y" : lat},
+            "geometry" : {"x" : lon, "y" : lat},
             "attributes" : {
-                "id" : int(phone_no),
-                "time": int(time)
+                "id" : phone_no,
+                "time": int(time)*1000
             }
         }
     ]
@@ -41,11 +41,12 @@ def incoming(request):
         # p#, lat, long, timestamp
         message = request.GET['text']
         phone_no, lat, lon, time = message.split(',')
-        p = Point(phone_no=phone_no, lat=float(lat), lon=float(lon), time=datetime.fromtimestamp(time))
+        p = Point(phone_no=phone_no, lat=float(lat), lon=float(lon), time=datetime.fromtimestamp(float(time)))
         p.save()
-    except Exception as err:
+	post(phone_no, lat, lon, time)
+    except ValueError as err:
         print "Not Recorded: {}".format(err.args[0])
-        pass
+        raise(err)
 
     return HttpResponse("RECEIVING SMS")
 

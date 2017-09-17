@@ -73,14 +73,14 @@
 
                 var map = new Map("mapDiv", {
                     basemap: "streets",
-                    center: [-100, 38],
+                    center: [-122.386743, 37.775643],
                     zoom: 15,
                     showLabels: true
                 });
                 var infoTemplate = new InfoTemplate("Identity", "id: ${id} | time: ${time}");
 
                 var featureLayer = new FeatureLayer(
-                    "https://services8.arcgis.com/j1t3CMZN0P8OmjOH/arcgis/rest/services/halp/FeatureServer/0",
+                    "https://services8.arcgis.com/j1t3CMZN0P8OmjOH/arcgis/rest/services/halp2/FeatureServer/0",
                     {mode: FeatureLayer.MODE_SNAPSHOT, outFields: ["*"], infoTemplate: infoTemplate, refreshInterval: 1}
                 );
 
