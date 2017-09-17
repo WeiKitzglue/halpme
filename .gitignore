@@ -6,3 +6,4 @@
 
 # Do not commit pycharm configuration files
 .idea/
+.venv
