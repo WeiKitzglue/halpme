@@ -1,5 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponse
+
+from datetime import datetime
 from models import Point
 
 import logging
@@ -12,9 +14,14 @@ def index(request):
 
 def incoming(request):
     logging.warning(request.GET)
-    message = request.GET['text']
-    coord = message.split(',')
-    p = Point(lat=coord[0], long=coord[1])
-    p.save()
+    try:
+        # p#, lat, long, timestamp
+        message = request.GET['text']
+        data = message.split(',')
+        p = Point(lat=data[1], long=data[2], time=datetime.fromtimestamp(data[3]))
+        p.save()
+    except Exception:
+        print "Not Recorded"
+        pass
 
     return HttpResponse("RECEIVING SMS")
