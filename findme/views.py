@@ -19,10 +19,10 @@ def index(request):
 def post(lat, long, time):
     feature = [
         {
-            "geometry" : {"x" : lat, "y" : long},
+            "geometry" : {"x" : long, "y" : lat},
             "attributes" : {
                 "id" : 1,
-                "time": time
+                "time": int(time)
             }
         }
     ]
@@ -38,8 +38,8 @@ def incoming(request):
     try:
         # p#, lat, long, timestamp
         message = request.GET['text']
-        data = message.split(',')
-        p = Point(lat=data[1], long=data[2], time=datetime.fromtimestamp(data[3]))
+        phone_no, lat, long, time = message.split(',')
+        p = Point(phone_no=phone_no, lat=lat, long=long, time=datetime.fromtimestamp(time))
         p.save()
     except Exception:
         print "Not Recorded"
