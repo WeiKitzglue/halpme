@@ -1,0 +1,8 @@
+# Do not commit pyc files
+*.pyc
+
+# Do not commit osx specific DS_store files
+*.DS_Store
+
+# Do not commit pycharm configuration files
+.idea/
