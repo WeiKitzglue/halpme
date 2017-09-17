@@ -32,7 +32,7 @@ def post(phone_no, lat, long, time):
                                    'features': json.dumps(feature)
                                })
 
-    logging.info(response.text)
+    logging.warning(response.text)
 
 
 def incoming(request):
@@ -40,11 +40,11 @@ def incoming(request):
     try:
         # p#, lat, long, timestamp
         message = request.GET['text']
-        phone_no, lat, long, time = message.split(',')
-        p = Point(phone_no=phone_no, lat=lat, long=long, time=datetime.fromtimestamp(time))
+        phone_no, lat, lon, time = message.split(',')
+        p = Point(phone_no=phone_no, lat=float(lat), lon=float(lon), time=datetime.fromtimestamp(time))
         p.save()
-    except Exception:
-        print "Not Recorded"
+    except Exception as err:
+        print "Not Recorded: {}".format(err.args[0])
         pass
 
     return HttpResponse("RECEIVING SMS")

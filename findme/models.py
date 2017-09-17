@@ -7,5 +7,5 @@ from datetime import datetime
 class Point(models.Model):
     phone_no = models.CharField(max_length=12)
     lat = models.FloatField()
-    long = models.FloatField()
+    lon = models.FloatField()
     time = models.DateTimeField(default=datetime.now, blank=True)
