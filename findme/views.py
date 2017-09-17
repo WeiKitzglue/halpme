@@ -10,10 +10,13 @@ import json
 
 FEATURELAYER_URL = 'https://services8.arcgis.com/j1t3CMZN0P8OmjOH/arcgis/rest/services/halp2/FeatureServer/0'
 
-# Create your views here.
 def index(request):
     points = Point.objects.all()
     return render(request, 'findme/index.html', {'points': points})
+
+def demo(request):
+    points = Point.objects.all()
+    return render(request, 'findme/demo.html', {'points': points})
 
 
 def post(phone_no, lat, lon, time):
